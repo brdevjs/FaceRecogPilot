@@ -1,13 +1,22 @@
-import { Button } from '../ui/button'
+import { Button } from "@/components/ui/button"
+import {
+    Dialog,
+    DialogContent,
+    DialogTrigger
+} from "@/components/ui/dialog"
+import { UploadImages } from "../upload-image/upload-image"
 
 const UploadBtn = () => {
-    const handlePreviewImage = () => {
-
-    }
-
     return (
         <>
-            <Button className="px-4 text-white border-l rounded">Upload</Button>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button>Upload</Button>
+                </DialogTrigger>
+                <DialogContent >
+                    <UploadImages />
+                </DialogContent>
+            </Dialog>
         </>
     )
 }
