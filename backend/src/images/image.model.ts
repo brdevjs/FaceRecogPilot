@@ -1,35 +1,17 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { Schema, Document, Date } from 'mongoose';
 
-export type ImageDocument = Image & Document;
-
-@Schema()
-@ApiTags('images')
-export class Image {
-    @Prop()
-    @ApiProperty()
+export interface Image extends Document {
     name: string;
-
-    @Prop()
-    @ApiProperty()
     size: string;
-
-    @Prop()
-    @ApiProperty()
     type: string;
-
-    @Prop({ default: Date.now() })
-    @ApiProperty()
     createdDate: Date;
-
-    @Prop()
-    @ApiProperty()
     concept: string;
-
-    @Prop()
-    @ApiProperty()
-    url: string;
 }
 
-export const ImageSchema = SchemaFactory.createForClass(Image);
+export const ImageSchema = new Schema({
+    name: String,
+    size: String,
+    type: String,
+    createdDate: Date,
+    concept: String,
+});

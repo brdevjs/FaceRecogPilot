@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@nestjs/mapped-types": "*",
-    "react-hook-form": "^7.48.2"
-  }
-}
