@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dialog"
 import { UploadImages } from "../upload-image/upload-image"
 
-const UploadBtn = () => {
+export const UploadBtn = () => {
     return (
         <>
             <Dialog>
@@ -21,4 +21,3 @@ const UploadBtn = () => {
     )
 }
 
-export default UploadBtn
