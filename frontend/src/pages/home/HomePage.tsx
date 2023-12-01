@@ -1,30 +1,24 @@
 import { getImages } from '@/apis/images.api';
-import FilterConcept from '@/components/filter-concept/filter-concept';
-import Footer from '@/components/footer/Footer';
-import Header from '@/components/header/Header';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Navbar } from '@/components/navbar/Navbar';
 import SideBar from '@/components/sidebar/SideBar';
-import { Button, Input } from '@/components/ui';
+import { Button, Dialog, DialogContent, DialogTrigger, Input } from '@/components/ui';
+import { Card } from '@/components/ui/card';
 import {
     Form,
     FormControl,
     FormField,
     FormItem
 } from "@/components/ui/form";
-import { UploadBtn } from '@/components/upload-btn/UploadBtn';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { UploadImages } from '@/components/upload-image/upload-image';
+import { cn } from '@/utils';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from '@tanstack/react-query';
+import { CameraIcon } from 'lucide-react';
+import { useState } from 'react';
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from '@/components/ui/select';
-import { useState } from 'react';
-import { TSFixMe } from '@/types';
 
 const formSchema = z.object({
     concept: z.string().min(2, {
@@ -59,76 +53,100 @@ function HomePage() {
         queryFn: () => getImages(searchParam),
     })
 
+
     return (
-        <>
-            <Header />
-            <div className='grid grid-cols-4 gap-4'>
+        <div className="h-full relative">
+            <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 z-80 bg-gray-900">
                 <SideBar />
-                <div className='col-span-3 border'>
-                    <div className="flex justify-between px-4 py-4">
-                        <>
-                            <Form {...form}>
-                                <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-row'>
-                                    <FormField
-                                        control={form.control}
-                                        name="concept"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormControl>
-                                                    <Input className="block w-10/12 px-4 py-2 border" placeholder="Search..." {...field} />
-                                                </FormControl>
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <Button type="submit">Submit</Button>
-                                </form>
-                            </Form>
-                        </>
-
-                        <FilterConcept />
-                        <UploadBtn />
-
-                        <Select onValueChange={(value: SearchType) => setSearchType(value)}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Search by" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectItem value="name">Name</SelectItem>
-                                    <SelectItem value="type">Type</SelectItem>
-                                    <SelectItem value="size">Size</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+            </div>
+            <main className="md:pl-72 pb-10">
+                <Navbar />
+                {/* Heading */}
+                <div className="px-4 lg:px-8 flex items-center gap-x-3 mb-8">
+                    <div className={cn("p-2 w-fit rounded-md")}>
+                        {/* <Icon className={cn("w-10 h-10", iconColor)} /> */}
+                        <CameraIcon className={cn("w-10 h-10")} />
                     </div>
-                    <>
-                        <div className="mx-auto max-w-2xl px-4 py-12 lg:max-w-7xl my-4">
-                            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-                                {isLoading
-                                    ?
-                                    <div>
-                                        Data is Loading.....
-                                    </div>
-                                    :
-                                    <>
-                                        {data?.data.map((item: TSFixMe) => {
-                                            return (
-                                                <div key={item._id}>
-                                                    <div>{item?.name || item?.filename}</div>
-                                                    <div>{item?.size}</div>
-                                                    <div>{item?.type}</div>
-                                                </div>
-                                            )
-                                        })}
-                                    </>
+                    <div>
+                        <h2 className="text-3xl font-bold">List Images</h2>
+                    </div>
+                </div>
+
+                <div>
+                    <div className="px-4 lg:px-8 flex">
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className='lg:w-3/5 flex flex-row'>
+                                <FormField
+                                    control={form.control}
+                                    name="concept"
+                                    render={({ field }) => (
+                                        <FormItem className='lg:w-4/5 mr-1'>
+                                            <FormControl>
+                                                <Input placeholder="Search..." {...field} />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button type="submit">Submit</Button>
+                            </form>
+
+                        </Form>
+                        {/* Select type */}
+                        <div className='lg:mr-36'>
+                            <Select>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Type</SelectLabel>
+                                        <SelectItem value="Name">Name</SelectItem>
+                                        <SelectItem value="Concept">Concept</SelectItem>
+                                        <SelectItem value="Date">Date</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        {/* Upload Btn */}
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button>Upload</Button>
+                            </DialogTrigger>
+                            <DialogContent >
+                                <UploadImages />
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+
+                    {/* Content */}
+                    {isLoading
+                        ? <>Loading.....</>
+                        : <div className='px-4 lg:px-8'>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-8">
+                                {data?.data?.map((image: any) => {
+                                    console.log("image", image);
+                                    return (
+                                        <Card key={image.id} className="rounded-lg overflow-hidden">
+                                            <div className="relative aspect-square">
+                                                <img
+                                                    src="https://static.billygraham.org/sites/media.billygraham.org/uploads/prod/2021/03/media-billy-graham-5.jpg"
+                                                    className="object-cover w-full h-full group-hover:opacity-75"
+                                                />
+                                                <p>Name: {image.name}</p>
+                                            </div>
+                                        </Card>
+                                    )
+
                                 }
+
+                                )}
                             </div>
                         </div>
-                    </>
+                    }
                 </div>
-            </div>
-            <Footer />
-        </>
+            </main>
+        </div>
+
     )
 }
 
