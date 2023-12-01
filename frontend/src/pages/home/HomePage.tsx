@@ -1,5 +1,6 @@
 import { getImages } from '@/apis/images.api';
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Navbar } from '@/components/navbar/Navbar';
 import SideBar from '@/components/sidebar/SideBar';
 import { Button, Dialog, DialogContent, DialogTrigger, Input } from '@/components/ui';
@@ -52,7 +53,6 @@ function HomePage() {
         queryKey: ['images', searchParam],
         queryFn: () => getImages(searchParam),
     })
-
 
     return (
         <div className="h-full relative">
