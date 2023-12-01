@@ -20,11 +20,11 @@ const FilterConcept = () => {
         <div>
             <Select>
                 <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a fruit" />
+                    <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        <SelectLabel>Fruits</SelectLabel>
+                        <SelectLabel>Type</SelectLabel>
                         {listConcept?.data?.concepts.map((concept: any) => {
                             return (
                                 <SelectItem key={concept.id} value={concept.name}>{concept.name}</SelectItem>
