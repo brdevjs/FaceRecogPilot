@@ -1,5 +1,4 @@
-import { useGetInputs } from '@/api/use-get-inputs';
-import { useSearchByConcept } from '@/api/use-search-by-concepts';
+import { getImages } from '@/apis/images.api';
 import FilterConcept from '@/components/filter-concept/filter-concept';
 import Footer from '@/components/footer/Footer';
 import Header from '@/components/header/Header';
@@ -11,18 +10,36 @@ import {
     FormField,
     FormItem
 } from "@/components/ui/form";
-import UploadBtn from '@/components/upload-btn/UploadBtn';
+import { UploadBtn } from '@/components/upload-btn/UploadBtn';
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from '@tanstack/react-query';
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from '@/components/ui/select';
+import { useState } from 'react';
+import { TSFixMe } from '@/types';
 
 const formSchema = z.object({
     concept: z.string().min(2, {
         message: "Concept must be at least 2 characters.",
     }),
 })
+type FormSchema = z.infer<typeof formSchema>;
 
-const HomePage = () => {
+type SearchType = 'name' | 'type' | 'size'
+
+function HomePage() {
+    const [searchType, setSearchType] = useState<SearchType>('name');
+    const [searchParam, setSearchParam] = useState('');
+    console.log(searchParam);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -30,24 +47,18 @@ const HomePage = () => {
         },
     });
 
-    const searchConcept = useSearchByConcept();
-    // searchConcept?.data?.hits.map((item) => {
-    //     console.log(item?.input?.data?.image?.url);
-    // });
-
-    const images = useGetInputs();
-
-    if (images.isLoading) {
-        return <div>Loading...</div>;
+    function onSubmit(data: FormSchema) {
+        if (searchType === 'name') setSearchParam(`name=${data.concept}`)
+        if (searchType === 'type') setSearchParam(`type=${data.concept}`)
+        if (searchType === 'size') setSearchParam(`size=${data.concept}`)
+        refetch()
     }
-    images?.data?.inputs.map((item: any) => {
-        console.log(item?.data?.concepts);
-    });
 
+    const { data, isLoading, refetch } = useQuery({
+        queryKey: ['images', searchParam],
+        queryFn: () => getImages(searchParam),
+    })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-
-    }
     return (
         <>
             <Header />
@@ -55,7 +66,6 @@ const HomePage = () => {
                 <SideBar />
                 <div className='col-span-3 border'>
                     <div className="flex justify-between px-4 py-4">
-                        {/* Search Bar */}
                         <>
                             <Form {...form}>
                                 <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-row'>
@@ -77,26 +87,41 @@ const HomePage = () => {
 
                         <FilterConcept />
                         <UploadBtn />
-                    </div>
 
-                    {/* Content */}
+                        <Select onValueChange={(value: SearchType) => setSearchType(value)}>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Search by" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="name">Name</SelectItem>
+                                    <SelectItem value="type">Type</SelectItem>
+                                    <SelectItem value="size">Size</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
                     <>
                         <div className="mx-auto max-w-2xl px-4 py-12 lg:max-w-7xl my-4">
                             <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-                                {images?.data?.inputs.map((image: any) => (
-                                    <div key={image.id} className="group">
-                                        <div className="h-40 border border-black overflow-hidden">
-                                            <img
-                                                src={image.data.image.url}
-                                                className="object-cover w-full h-full group-hover:opacity-75"
-                                            />
-                                        </div>
-                                        <p className="mt-1 text-lg font-medium text-gray-900">Name: {image.name}</p>
-                                        <p className="mt-1 text-lg font-medium text-gray-900">Created Date: {image.created_at}</p>
-                                        <p className="mt-1 text-lg font-medium text-gray-900">Type: {image.type}</p>
-                                        <p className="mt-1 text-lg font-medium text-gray-900">Size: {image.size}</p>
+                                {isLoading
+                                    ?
+                                    <div>
+                                        Data is Loading.....
                                     </div>
-                                ))}
+                                    :
+                                    <>
+                                        {data?.data.map((item: TSFixMe) => {
+                                            return (
+                                                <div key={item._id}>
+                                                    <div>{item?.name || item?.filename}</div>
+                                                    <div>{item?.size}</div>
+                                                    <div>{item?.type}</div>
+                                                </div>
+                                            )
+                                        })}
+                                    </>
+                                }
                             </div>
                         </div>
                     </>
@@ -104,7 +129,6 @@ const HomePage = () => {
             </div>
             <Footer />
         </>
-
     )
 }
 

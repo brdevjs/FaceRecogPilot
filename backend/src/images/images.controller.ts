@@ -1,4 +1,12 @@
-import { Controller, Post, UseInterceptors, UploadedFile, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseInterceptors,
+  UploadedFile,
+  Get,
+  Query,
+  Param
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Image } from './image.model';
 import { ImageService } from './images.service';
@@ -14,7 +22,10 @@ export class ImageController {
   }
 
   @Get()
-  async getAllImages(): Promise<Image[]> {
-    return this.imageService.getAllImages();
+  async getAllImages(
+    @Query() query,
+  ): Promise<Image[]> {
+    // xu ly nhan params truyen tu request len
+    return this.imageService.getAllImages({ query });
   }
 }

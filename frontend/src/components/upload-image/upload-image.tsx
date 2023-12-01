@@ -1,3 +1,4 @@
+import { uploadImages } from '@/apis/images.api';
 import {
     Button,
     Dialog,
@@ -9,10 +10,12 @@ import {
     ScrollArea,
 } from '@/components/ui';
 import { cn } from '@/utils';
+import { useMutation } from '@tanstack/react-query';
 import { Expand, Loader2, RotateCcw, Trash2, UploadCloud } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export function UploadImages() {
+    const [image, setImage] = useState<File>();
     const [files, setFiles] = useState<File[]>([]);
     const [loadingState, setLoadingState] = useState<Record<string, boolean>>({});
     const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -51,6 +54,7 @@ export function UploadImages() {
         }
         setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
         setFileDropError('');
+        selectedFiles.map((item) => setImage(item))
     }
 
     function simulateLoading(file: File) {
@@ -111,6 +115,20 @@ export function UploadImages() {
             }
         });
     }, [files]);
+
+    const { mutate } = useMutation({
+        mutationFn: (file: File) => {
+            console.log(file);
+            return uploadImages(file);
+        }
+    })
+
+
+    function handleUpload() {
+        if (image) {
+            mutate(image);
+        }
+    }
 
     return (
         <>
@@ -265,7 +283,7 @@ export function UploadImages() {
                         <RotateCcw className="mr-1 inline-block h-4 w-4" />
                         Reset
                     </Button>
-                    <Button className='mt-2' variant="secondary" >
+                    <Button onClick={() => handleUpload()} className='mt-2' variant="secondary" >
                         <UploadCloud className='mr-1 inline-block h-4 w-4' />
                         Upload
                     </Button>

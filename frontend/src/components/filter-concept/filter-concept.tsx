@@ -2,20 +2,12 @@ import {
     Select,
     SelectContent,
     SelectGroup,
-    SelectItem,
     SelectLabel,
     SelectTrigger,
-    SelectValue,
+    SelectValue
 } from '../ui/select';
-import { useGetListConcept } from '@/api/use-get-list-concepts'
 
 const FilterConcept = () => {
-    const listConcept = useGetListConcept();
-
-    if (listConcept.isLoading) {
-        return <div>Loading...</div>;
-    }
-
     return (
         <div>
             <Select>
@@ -25,11 +17,11 @@ const FilterConcept = () => {
                 <SelectContent>
                     <SelectGroup>
                         <SelectLabel>Fruits</SelectLabel>
-                        {listConcept?.data?.concepts.map((concept: any) => {
+                        {/* {listConcept?.data?.concepts.map((concept: any) => {
                             return (
                                 <SelectItem key={concept.id} value={concept.name}>{concept.name}</SelectItem>
                             )
-                        })}
+                        })} */}
                     </SelectGroup>
                 </SelectContent>
             </Select>
