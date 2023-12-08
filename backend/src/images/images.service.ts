@@ -3,10 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Image } from './image.model';
+import { DocumentBuilder } from '@nestjs/swagger';
+import { exec } from 'child_process';
 
 @Injectable()
 export class ImageService {
-  constructor(@InjectModel('Image') private readonly imageModel: Model<Image>) { }
+  constructor(@InjectModel('Image') private readonly imageModel: Model<Image>) {}
 
   async uploadImage(file: Express.Multer.File): Promise<Image> {
     const imageData = {
@@ -22,7 +24,6 @@ export class ImageService {
   }
 
   async getAllImages({ query }): Promise<Image[]> {
-
     try {
       const name = query.name;
 
@@ -31,7 +32,10 @@ export class ImageService {
       if (!name) {
         images = await this.imageModel.find().exec();
       } else {
-        images = await this.imageModel.find({ name: { $regex: '.*' + name + '.*' } }).limit(5).exec();
+        images = await this.imageModel
+          .find({ name: { $regex: '.*' + name + '.*' } })
+          .limit(5)
+          .exec();
       }
       return images;
     } catch (error) {
@@ -42,9 +46,20 @@ export class ImageService {
   async getImage({ id }): Promise<Image> {
     try {
       const image = await this.imageModel.findById(id);
+
       return image;
     } catch (error) {
-      throw new Error(`Error fetching image: ${error.message}`)
+      throw new Error(`Error fetching image: ${error.message}`);
+    }
+  }
+
+  async getImageByName({ name }): Promise<Image[]> {
+    try {
+      const images = await this.imageModel.find({ name: { $regex: '.*' + name + '.*' } });
+
+      return images;
+    } catch (error) {
+      throw new Error(`Error fetching image: ${error.message}`);
     }
   }
 }

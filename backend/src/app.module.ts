@@ -10,8 +10,13 @@ import { ImageModule } from './images/images.module';
     // ServeStaticModule.forRoot({
     //   rootPath: join(__dirname, '..', 'public'),   // <-- path to the static files
     // }),
-    MongooseModule.forRoot('mongodb://localhost:27017/your-database-name', {}),
+    // MongooseModule.forRoot('mongodb://localhost:27017/your-database-name', {}),
+    MongooseModule.forRoot(
+      'mongodb+srv://admin:eQWiB7U3dIfc0qTJ@cluster0.ykrzgin.mongodb.net/?retryWrites=true&w=majority',
+      {}
+    ),
+
     ImageModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
