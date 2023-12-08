@@ -129,7 +129,7 @@ function HomePage() {
                                         <Card key={image.id} className="rounded-lg overflow-hidden">
                                             <div className="relative aspect-square">
                                                 <img
-                                                    src="https://static.billygraham.org/sites/media.billygraham.org/uploads/prod/2021/03/media-billy-graham-5.jpg"
+                                                    src={image.url}
                                                     className="object-cover w-full h-full group-hover:opacity-75"
                                                 />
                                                 <p>Name: {image.name}</p>

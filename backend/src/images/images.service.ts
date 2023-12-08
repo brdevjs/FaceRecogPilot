@@ -1,11 +1,8 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Image } from './image.model';
-
-type GetAllImage = {
-  name: string;
-}
 
 @Injectable()
 export class ImageService {
@@ -17,6 +14,7 @@ export class ImageService {
       type: file.mimetype,
       size: file.size,
       createdDate: Date.now(),
+      url: `http://localhost:3000/${file.originalname}`,
     };
 
     const newImage = new this.imageModel(imageData);
@@ -24,33 +22,29 @@ export class ImageService {
   }
 
   async getAllImages({ query }): Promise<Image[]> {
-    try {
-      // TODO: Thay tham số phủ hợp cho mongoose
-      // https://mongoosejs.com/docs/api/model.html#Model.find()
-      // Ví dụ chạy được: const images = await this.imageModel.find({ name: /bill/i }).exec();
 
-      // Neu khong co name (name = null || name = undefine) => find all images
-      // Neu name co gia tri => tim image theo name
+    try {
       const name = query.name;
+
       let images;
+
       if (!name) {
         images = await this.imageModel.find().exec();
       } else {
         images = await this.imageModel.find({ name: { $regex: '.*' + name + '.*' } }).limit(5).exec();
       }
-      // Check if any images were found
-      // if (images.length === 0) {
-      //   // No images found
-      //   console.log('No documents found.');
-      // } else {
-      //   // Images found
-      //   // console.log('Found documents:', images);
-      // }
-
       return images;
     } catch (error) {
       throw new Error(`Error searching images: ${error.message}`);
     }
   }
 
+  async getImage({ id }): Promise<Image> {
+    try {
+      const image = await this.imageModel.findById(id);
+      return image;
+    } catch (error) {
+      throw new Error(`Error fetching image: ${error.message}`)
+    }
+  }
 }

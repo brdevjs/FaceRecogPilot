@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ImageSchema } from './image.model';
@@ -13,6 +14,7 @@ import { MulterModule } from '@nestjs/platform-express';
       limits: {
         fileSize: 1024 * 1024 * 10,
       },
+      // dest: './upload',
     }),
   ],
   controllers: [ImageController],

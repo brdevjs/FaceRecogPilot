@@ -1,14 +1,17 @@
+/* eslint-disable prettier/prettier */
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import * as path from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(
+  const app = await NestFactory.create<NestExpressApplication>(
     AppModule,
-    // new FastifyAdapter({
-    //   bodyLimit: 52428800,
-    // }),
-    { abortOnError: false, bodyParser: true },
+    {
+      abortOnError: false,
+      bodyParser: true
+    },
   );
 
   // https://docs.nestjs.com/faq/global-prefix
@@ -25,6 +28,9 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+
+  app.useStaticAssets(path.join(__dirname, "../uploads"));
+
   await app.listen(3000);
 }
 bootstrap();

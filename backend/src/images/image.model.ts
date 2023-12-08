@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Schema, Document, Date } from 'mongoose';
 
 export interface Image extends Document {
@@ -5,7 +6,7 @@ export interface Image extends Document {
     size: string;
     type: string;
     createdDate: Date;
-    concept: string;
+    url: string;
 }
 
 export const ImageSchema = new Schema({
@@ -13,5 +14,5 @@ export const ImageSchema = new Schema({
     size: String,
     type: String,
     createdDate: Date,
-    concept: String,
+    url: String
 });
